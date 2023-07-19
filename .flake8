@@ -1,0 +1,5 @@
+[flake8]
+count = True
+max-line-length = 120
+ignore = E731,W503,W605,E203
+statistics = True
