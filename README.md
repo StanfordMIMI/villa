@@ -10,7 +10,6 @@ Vision-language models (VLMs) are generally trained on datasets consisting of im
 - We present **Vi**sion-**L**anguage **L**earning with **A**ttributes (ViLLA), which leverages self-supervised learning in order to capture fine-grained region-attribute relationships from complex datasets. ViLLA involves two components:  (a) a lightweight, self-supervised mapping model to decompose image-text samples into region-attribute pairs, and (b) a contrastive VLM to learn representations from generated region-attribute pairs.
 
 ## ⚡️ Installation
-### Quickstart
 Use the following commands to clone and install this repository.
 
 ```python
@@ -20,15 +19,19 @@ pip install -e .
 pre-commit install
 pre-commit
 ```
-### Load Data
 
-### Load Pretrained Models
+## 🔢 Using DocMNIST
+DocMNIST is a synthetic vision-language training dataset designed to enable controlled evaluations of VLMs.
 
-## Training ViLLA Models
+The ```docmnist/generate_docmnist.py``` script can be used to create a DocMNIST dataset. The following dataset-level variables can be controlled when generating a DOCMNIST dataset: the set of possible attributes (which can be modified in ```docmnist/generate_docmnist.py```), the attribute budget (specified by the ```attribute_budget``` parameter), and the targeted average sample complexity (specified by the ```target_sample_complexity``` parameter). Note that the true average sample complexity may vary slightly from the targeted value.
 
-## Evaluating ViLLA Models
-
-## Results
+```python
+python3 docmnist/generate_docmnist.py \
+    --data_dir=data/ \
+    --attribute_budget=30000 \
+    --target_sample_complexity=16
+```
+The ```docmnist/visualize_data.ipynb``` notebook can be used to visualize generated images.
 
 ## 📎 Citation
 If you find this repository useful for your work, please cite the following paper:
