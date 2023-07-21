@@ -4,6 +4,8 @@ import torch
 from PIL import Image
 from pathlib import Path
 import shutil
+import pyrootutils
+import os
 
 from utils import (
     load_mnist_data,
@@ -13,6 +15,8 @@ from utils import (
     save_images,
     save_ann,
 )
+
+root = pyrootutils.setup_root(__file__, dotenv=True, pythonpath=True)
 
 
 def parse_args():
@@ -26,13 +30,6 @@ def parse_args():
         description="Script for generating a DocMNIST dataset."
     )
 
-    parser.add_argument(
-        "--data_dir",
-        type=str,
-        default=None,
-        required=True,
-        help="Folder for storing data.",
-    )
     parser.add_argument("--seed", type=int, default=23, help="Random seed.")
     parser.add_argument(
         "--attribute_budget",
@@ -170,9 +167,10 @@ def construct_docmnist_dataset(
 
 def main():
     args = parse_args()
+    data_dir = os.path.join(root, "data")
 
     np.random.seed(args.seed)
-    data, targets = load_mnist_data(args.data_dir)
+    data, targets = load_mnist_data(data_dir)
     target_comp = args.target_sample_complexity
     budget = args.attribute_budget
 
@@ -210,10 +208,7 @@ def main():
     print(f"-----------")
 
     # Save images and annotations to disk
-    out_dir = (
-        Path(args.data_dir)
-        / f"docmnist_{args.attribute_budget}_{np.round(train_complexity,1)}"
-    )
+    out_dir = Path(data_dir) / f"docmnist_{args.attribute_budget}_{train_complexity}"
     if out_dir.exists() and out_dir.is_dir():
         shutil.rmtree(out_dir)
     out_dir.mkdir()

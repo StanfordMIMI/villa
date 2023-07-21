@@ -1,0 +1,17 @@
+# @package _global_
+
+defaults:
+  - _self_
+  - experiment: ???
+
+# project root dir
+project_dir: ${oc.env:PROJECT_DIR}
+
+# checkpoint dir
+checkpoint_dir: ${oc.env:PROJECT_DIR}/villa/checkpoints
+
+# task name, determines output directory path
+task_name: ???
+
+# seed for random number generators in pytorch, numpy and python.random
+seed: 23

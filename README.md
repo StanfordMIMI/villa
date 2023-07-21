@@ -20,14 +20,15 @@ pre-commit install
 pre-commit
 ```
 
+Then, create a file ```.env``` with the path to the package root (refer to ```.env_example``` for an example).
+
 ## 🔢 Using DocMNIST
 DocMNIST is a synthetic vision-language training dataset designed to enable controlled evaluations of VLMs.
 
-The ```docmnist/generate_docmnist.py``` script can be used to create a DocMNIST dataset. The following dataset-level variables can be controlled when generating a DOCMNIST dataset: the set of possible attributes (which can be modified in ```docmnist/generate_docmnist.py```), the attribute budget (specified by the ```attribute_budget``` parameter), and the targeted average sample complexity (specified by the ```target_sample_complexity``` parameter). Note that the true average sample complexity may vary slightly from the targeted value.
+The ```docmnist/generate_docmnist.py``` script can be used to create a DocMNIST dataset. The following dataset-level variables can be controlled when generating a DOCMNIST dataset: the set of possible attributes (which can be modified in ```docmnist/generate_docmnist.py```), the attribute budget (specified by the ```attribute_budget``` parameter), and the targeted sample complexity for each image-text pair (specified by the ```target_sample_complexity``` parameter). Note that the true average sample complexity will vary slightly from the targeted value.
 
 ```python
 python3 docmnist/generate_docmnist.py \
-    --data_dir=data/ \
     --attribute_budget=30000 \
     --target_sample_complexity=16
 ```

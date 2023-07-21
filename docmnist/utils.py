@@ -309,6 +309,11 @@ def save_ann(train_data: dict, val_data: dict, img_paths: list, out_dir: str):
         lambda x: [list(filter(lambda item: item is not None, a)) for a in x]
     )
 
+    # All attributes present in the image
+    df["attributes"] = df["reg_to_attr"].apply(
+        lambda x: list(set([a for y in x for a in y]))
+    )
+
     # Save to disk
     print(f"Saving annotations to {out_dir}/annotations.feather")
     df.to_feather(out_dir / "annotations.feather")

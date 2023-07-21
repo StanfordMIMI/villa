@@ -1,0 +1,52 @@
+# @package _global_
+
+task_name: docmnist_stage1
+docmnist_data_folder: ${project_dir}/data/docmnist_30000_15.2
+batch_size: 48
+epochs: 30
+
+model:
+  _target_: villa.models.Stage1_RN50
+  emb_dim: 1024
+  one_proj: false
+  adapter: false
+  data_dir: ${docmnist_data_folder}
+
+loss:
+  _target_: villa.losses.Stage1_Loss
+  temp: 0.07
+  one_proj: ${model.one_proj}
+  data_dir: ${docmnist_data_folder}
+
+optimizer:
+  _partial_: true
+  _target_: torch.optim.AdamW
+  lr: 0.0001
+
+dataloader:
+  train:
+    dataset:
+      _target_: villa.dataloaders.DocMNIST_Stage1
+      split: train
+      data_dir: ${docmnist_data_folder}
+    batch_size: ${batch_size}
+    shuffle: true
+    num_workers: 8
+    collate_fn:
+      _partial_: true
+      _target_: villa.utils.utils.collate_grouped
+    pin_memory: true
+    drop_last: true
+  val:
+    dataset:
+      _target_: villa.dataloaders.DocMNIST_Stage1
+      split: val
+      data_dir: ${docmnist_data_folder}
+    batch_size: ${batch_size}
+    shuffle: false
+    num_workers: 8
+    collate_fn:
+      _partial_: true
+      _target_: villa.utils.utils.collate_grouped
+    pin_memory: true
+    drop_last: false
