@@ -10,7 +10,7 @@ Vision-language models (VLMs) are generally trained on datasets consisting of im
 - We present **Vi**sion-**L**anguage **L**earning with **A**ttributes (ViLLA), which leverages self-supervised learning in order to capture fine-grained region-attribute relationships from complex datasets. ViLLA involves two components:  (a) a lightweight, self-supervised mapping model to decompose image-text samples into region-attribute pairs, and (b) a contrastive VLM to learn representations from generated region-attribute pairs.
 
 ## ⚡️ Installation
-Use the following commands to clone and install this repository.
+Use the following commands to clone and install this repository. Confirm that PyTorch 1.7.1 (or later) and torchvision are installed on your system.
 
 ```python
 git clone https://github.com/maya124/villa.git
@@ -33,6 +33,46 @@ python3 docmnist/generate_docmnist.py \
     --target_sample_complexity=16
 ```
 The ```docmnist/visualize_data.ipynb``` notebook can be used to visualize generated images.
+
+## ⚙️ Train ViLLA Models
+### Preprocessing
+We preprocess the dataset by precomputing embeddings for all regions and attributes. We provide an example preprocessing script for DocMNIST (```preprocess/preprocess_docmnist.py```), which can be run as follows. Replace the parameter ```data_dir``` with the name of the directory where data is stored.
+
+```python
+python3 preprocess/preprocess_docmnist.py \
+    --data_dir=docmnist_30000_15.2 \
+```
+
+The preprocessing script generates two outputs in the ```data_dir``` directory: (1) ```attr_embs.pth```, which contains text embeddings for all attributes, and (2) ```region_embs```, which contains image embeddings for all regions.
+
+### Stage 1: Mapping Model
+We first train a lightweight, self-supervised mapping model to decompose image-text samples into region-attribute pairs. We provide an example config (```villa/configs/experiment/docmnist_stage1.py```) and training code (```villa/stage1.py```) , which can be run as follows.
+
+```python
+python3 -m villa.stage1 experiment=docmnist_stage1
+```
+
+Config parameters can be overridden from the command line with the following format:
+
+```python
+python3 -m villa.stage1 experiment=docmnist_stage1 epochs=10
+```
+
+This script generates a checkpoint for the mapping model (```last.pkl```) and region-attribute mappings (```mapping.feather```), which are stored in  ```villa/checkpoints/docmnist_stage1/```.
+
+
+### Stage 2: Vision-Language Model
+Download pretrained weights for the CLIP image encoder (```clip.pth```) from [this link](https://drive.google.com/drive/u/1/folders/1luymCKnHZ86xFFsGZAbW2nKYylVLTi-g). Store these weights in ```villa/checkpoints/```.
+
+
+Given the results from Stage 1, we now train a contrastive vision-language model to learn representations from generated region-attribute pairs. We provide an example config (```villa/configs/experiment/docmnist_stage2.py```) and training code (```villa/stage2.py```) , which can be run as follows.
+
+```python
+python3 -m villa.stage2 experiment=docmnist_stage2
+```
+
+This script generates checkpoints for the VLM, which are stored in ```villa/checkpoints/docmnist_stage2/```.
+
 
 ## 📎 Citation
 If you find this repository useful for your work, please cite the following paper:
