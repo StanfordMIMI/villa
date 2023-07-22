@@ -1,0 +1,65 @@
+# @package _global_
+
+task_name: docmnist_stage2
+data_dir: ${project_dir}/data/docmnist_30000_15.2
+stage_1_ckpt_dir: ${checkpoint_dir}/docmnist_stage1
+batch_size: 256
+epochs: 100
+
+model:
+  _target_: villa.models.Stage2_RN50
+  emb_dim: 1024
+  clip_weights: ${checkpoint_dir}/clip.pth
+
+loss:
+  _target_: villa.losses.Stage2_Loss
+  temp: 0.07
+
+optimizer:
+  _partial_: true
+  _target_: torch.optim.Adam
+  weight_decay: 0.2
+  betas:
+    - 0.9
+    - 0.999
+  eps: 1e-8
+  lr: 5e-5
+
+scheduler:
+  _partial_: true
+  _target_: torch.optim.lr_scheduler.ReduceLROnPlateau
+  mode: min
+  factor: 0.5
+  patience: 1
+  threshold: 0.005
+  threshold_mode: abs
+
+dataloader:
+  train:
+    dataset:
+      _target_: villa.dataloaders.DocMNIST_Stage2Dataset
+      split: train
+      data_dir: ${data_dir}
+      stage_1_ckpt_dir: ${stage_1_ckpt_dir}
+    batch_size: ${batch_size}
+    shuffle: true
+    num_workers: 8
+    collate_fn:
+      _partial_: true
+      _target_: villa.utils.utils.collate_grouped
+    pin_memory: true
+    drop_last: true
+  val:
+    dataset:
+      _target_: villa.dataloaders.DocMNIST_Stage2Dataset
+      split: val
+      data_dir: ${data_dir}
+      stage_1_ckpt_dir: ${stage_1_ckpt_dir}
+    batch_size: ${batch_size}
+    shuffle: false
+    num_workers: 8
+    collate_fn:
+      _partial_: true
+      _target_: villa.utils.utils.collate_grouped
+    pin_memory: true
+    drop_last: false

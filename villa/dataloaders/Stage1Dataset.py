@@ -11,6 +11,13 @@ class Stage1Dataset(Dataset):
     __metaclass__ = abc.ABC
 
     def __init__(self, split, data_dir):
+        """
+        Initialize dataloader for Stage 1.
+
+        Parameters:
+            split (str): Indicates the split (e.g. "train", "val")
+            data_dir (str): Directory where data is stored
+        """
         super().__init__()
 
         self.split = split
@@ -20,6 +27,15 @@ class Stage1Dataset(Dataset):
         self.examples = self.ann[self.ann["split"] == split]
 
     def encode_attributes(self, attributes):
+        """
+        Generate binary vector indicating the presence/absence of each attribute.
+
+        Parameters:
+            attributes (list): List of all attributes in the dataset
+        Returns:
+            attr_binary_vec (list): List of binary attribute presence/absence vectors
+                                    for each image in the dataset
+        """
         attr_binary_vec = []
         for idx, row in self.examples.iterrows():
             vec = np.zeros(len(attributes))
@@ -29,6 +45,12 @@ class Stage1Dataset(Dataset):
         return attr_binary_vec
 
     def get_region_embs(self):
+        """
+        Load precomputed region embeddings
+
+        Returns:
+            region_embs (dict): Maps each image id to corresponding region embeddings
+        """
         region_embs = {}
         print(f"Loading region embeddings from {self.data_dir}/region_embs")
         emb_df = pd.read_feather(
@@ -49,7 +71,16 @@ class Stage1Dataset(Dataset):
             region_embs[str(image_id)] = embs[row["file_id"]].reshape(-1, 1024)
         return region_embs
 
-    def getInputs(self, example, image_id):
+    def get_inputs(self, example, image_id):
+        """
+        Helper function for __getitem__()
+
+        Parameters:
+            example (pd.DataFrame): Selected row from annotation dataframe
+            image_id (str): Image identifier
+        Returns:
+            out_dict (dict): Dictionary populated with relevant inputs for stage 1 models
+        """
         out_dict = {}
         reg_emb = self.region_embs[image_id]
         out_dict["num_regions"] = torch.tensor(reg_emb.shape[0])

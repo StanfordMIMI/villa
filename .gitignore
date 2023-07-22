@@ -21,6 +21,7 @@ lib64/
 parts/
 sdist/
 var/
+villa/checkpoints/
 wheels/
 share/python-wheels/
 *.egg-info/

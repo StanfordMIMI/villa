@@ -8,7 +8,6 @@ from rich import print
 import pyrootutils
 
 from villa.utils.train import train
-from villa.utils.mapping import mapping
 from villa.utils.utils import set_seed
 
 root = pyrootutils.setup_root(__file__, dotenv=True, pythonpath=True)
@@ -26,10 +25,12 @@ def main(cfg: DictConfig):
     if seed is not None:
         set_seed(seed)
 
-    # Initialize model, loss, and optimizer
+    # Initialize model, loss, optimizer, and scheduler
     model = cfg.model.to("cuda")
     loss = cfg.loss
     opt = cfg.optimizer(model.parameters())
+    scheduler = cfg.scheduler(opt)
+
     print(
         f"=> Using model {type(model).__name__} with loss {type(loss).__name__} on {torch.cuda.device_count()} GPUs"
     )
@@ -45,47 +46,19 @@ def main(cfg: DictConfig):
     # Support for multi-GPU training
     model = torch.nn.DataParallel(model)
 
-    # Train Stage 1 model
-    print(f"=> Training ViLLA: Stage 1")
+    # Train Stage 2 model
+    print(f"=> Training ViLLA: Stage 2")
     train(
         model,
         loss,
         opt,
-        None,
+        scheduler,
         train_loader,
         val_loader,
         cfg.epochs,
         cfg.batch_size,
         checkpoint_dir,
-        False,
-    )
-
-    # Update dataloader parameters for inference
-    cfg.dataloader.train.batch_size = 1
-    cfg.dataloader.train.shuffle = False
-    cfg.dataloader.train.drop_last = False
-    cfg.dataloader.val.batch_size = 1
-    train_loader = DataLoader(**cfg.dataloader.train)
-    val_loader = DataLoader(**cfg.dataloader.val)
-
-    # Generate mappings between regions and attributes
-    mapping(
-        model,
-        train_loader,
-        "train",
-        cfg.model.one_proj,
-        cfg.data_dir,
-        checkpoint_dir,
-        cfg.mapping.epsilon,
-    )
-    mapping(
-        model,
-        val_loader,
-        "val",
-        cfg.model.one_proj,
-        cfg.data_dir,
-        checkpoint_dir,
-        cfg.mapping.epsilon,
+        True,
     )
 
 

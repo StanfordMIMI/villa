@@ -41,6 +41,13 @@ ATTRIBUTES = [
 
 
 def generate_attribute_embs(out_dir):
+    """
+    Generate embeddings for each attribute.
+
+    Parameters:
+        out_dir: Directory for storing attribute embeddings
+    """
+
     def get_prompts(attr):
         if attr in [
             "zero",
@@ -84,10 +91,12 @@ def generate_attribute_embs(out_dir):
 
     model, preprocess = clip.load("RN50", "cuda")
 
+    # Obtain prompts for each attribute
     prompt_list = []
     for attr in ATTRIBUTES:
         prompt_list.append(get_prompts(attr))
 
+    # Compute each attribute embedding as the average of its associated prompt embeddings
     attr_embs = []
     with torch.no_grad():
         for prompt in prompt_list:
@@ -105,6 +114,12 @@ def generate_attribute_embs(out_dir):
 
 
 def generate_region_embs(out_dir):
+    """
+    Generate embeddings for each region.
+
+    Parameters:
+        out_dir: Directory for storing region embeddings
+    """
     ann = pd.read_feather(f"{out_dir}/annotations.feather")
     components = {}
     out_dir = Path(out_dir) / f"region_embs"

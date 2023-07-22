@@ -6,7 +6,7 @@ class BaseLoss(torch.nn.Module):
     __metaclass__ = abc.ABC
 
     def __init__(self):
-        super(BaseLoss, self).__init__()
+        super().__init__()
 
         self.iteration = 0
         self.running_loss = 0

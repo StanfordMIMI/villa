@@ -3,6 +3,8 @@
 defaults:
   - _self_
   - experiment: ???
+  - override hydra/hydra_logging: disabled
+  - override hydra/job_logging: disabled
 
 # project root dir
 project_dir: ${oc.env:PROJECT_DIR}
@@ -15,3 +17,9 @@ task_name: ???
 
 # seed for random number generators in pytorch, numpy and python.random
 seed: 23
+
+# disable automatic hydra logs
+hydra:
+  output_subdir: null
+  run:
+    dir: .
