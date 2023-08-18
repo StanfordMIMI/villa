@@ -13,7 +13,7 @@ Vision-language models (VLMs) are generally trained on datasets consisting of im
 Use the following commands to clone and install this repository. Confirm that PyTorch and torchvision are installed on your system.
 
 ```python
-git clone https://github.com/maya124/villa.git
+git clone https://github.com/StanfordMIMI/villa.git
 cd villa
 pip install -e .
 pre-commit install
