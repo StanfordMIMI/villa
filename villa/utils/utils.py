@@ -3,10 +3,10 @@ from torch import nn
 import torch.nn.functional as F
 import numpy as np
 import random
-from torch._six import string_classes
 from typing import Tuple, Union
 import collections
-
+import warnings
+warnings.filterwarnings('ignore', category=UserWarning, message='TypedStorage is deprecated')
 
 def set_seed(seed):
     """
@@ -53,7 +53,7 @@ def collate_grouped(batch, key=None):
             return torch.cat(batch, 0, out=out)
         else:
             return torch.stack(batch, 0, out=out)
-    elif isinstance(elem, string_classes):
+    elif isinstance(elem, str):
         return batch
 
 

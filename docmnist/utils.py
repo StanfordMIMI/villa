@@ -74,7 +74,7 @@ def get_colors():
     colors = []
     for val in cmap_vals:
         rgb = cmap(val)[:3]
-        rgb = [int(np.float(x)) for x in np.array(rgb) * 255]
+        rgb = [int(float(x)) for x in np.array(rgb) * 255]
         colors.append(rgb)
     color_names = ["red", "yellow", "green", "blue", "purple"]
     return color_names, colors

@@ -60,6 +60,7 @@ python3 -m villa.stage1 experiment=docmnist_stage1 epochs=10
 
 This script generates a checkpoint for the mapping model (```last.pkl```) and region-attribute mappings (```mapping.feather```), which are stored in  ```villa/checkpoints/docmnist_stage1/```.
 
+Note that this script does not currently support multi-GPU training. If your compute environment includes multiple GPUs, we recommend prepending ```CUDA_VISIBLE_DEVICES=0``` to the training command.
 
 ### Stage 2: Vision-Language Model
 Download pretrained weights for the CLIP image encoder (```clip.pth```) from [this link](https://drive.google.com/drive/u/1/folders/1luymCKnHZ86xFFsGZAbW2nKYylVLTi-g). Store these weights in ```villa/checkpoints/```.
