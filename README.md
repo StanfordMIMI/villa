@@ -1,5 +1,5 @@
 # ViLLA: Fine-Grained Vision-Language Representation Learning from Real-World Data
-This repository contains the PyTorch implementation for ViLLA (ICCV 2023).
+This repository contains the PyTorch implementation for [ViLLA (ICCV 2023)](https://arxiv.org/abs/2308.11194).
 
 ![Overview](assets/img.png "")
 
